@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengyu Zhang</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:     #F7F4EF;
+      --bg2:    #EEEAE3;
+      --text:   #18160F;
+      --muted:  #80796A;
+      --border: #DDD9D0;
+      --accent: oklch(40% 0.14 255);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===================== HERO ===================== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 0 8vw;
+      position: relative;
+    }
+
+    .hero-content {
+      max-width: 780px;
+      padding: 80px 0;
+    }
+
+    .hero-name-block {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: clamp(36px, 5vw, 60px);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.05em;
+    }
+
+    .hero-name-block .line {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.18em;
+    }
+
+    .hero-name-block .dim { color: var(--muted); font-weight: 600; }
+    .hero-name-block .accent { color: var(--accent); }
+
+    .hero-photo-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.5em;
+      height: 1.5em;
+      border-radius: 32%;
+      background: var(--bg2);
+      border: 2px solid var(--border);
+      overflow: hidden;
+      vertical-align: middle;
+      position: relative;
+      top: -0.12em;
+      flex-shrink: 0;
+    }
+    .hero-photo-chip img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 60% 65%;
+      transform: scale(1.2);
+      transform-origin: 60% 65%;
+    }
+    .hero-photo-chip svg { width: 60%; height: 60%; opacity: 0.45; }
+
+    /* icon-only social links inline in hero */
+    .hero-icons {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: 0.3em;
+      vertical-align: middle;
+      position: relative;
+      top: -0.05em;
+    }
+
+    .hero-icon-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+      flex-shrink: 0;
+    }
+    .hero-icon-link:hover { background: var(--border); color: var(--text); }
+    .hero-icon-link svg { width: 14px; height: 14px; }
+
+    .hero-desc {
+      font-size: 15px;
+      color: var(--muted);
+      max-width: 720px;
+      line-height: 1.8;
+      font-weight: 300;
+      margin-bottom: 44px;
+    }
+    .hero-desc strong { font-weight: 500; color: var(--text); }
+
+    .hero-cta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+    }
+
+    .hero-cta-arrow {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: bob 2s ease-in-out infinite;
+    }
+
+    @keyframes bob {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(4px); }
+    }
+
+    /* ===================== SPLIT SECTION ===================== */
+    .split {
+      display: flex;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    /* --- LEFT PANEL --- */
+    .left {
+      width: 40%;
+      min-width: 300px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      border-right: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .left-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* idle state in left panel (shown when no item is active) */
+    .left-idle {
+      position: absolute;
+      inset: 0;
+      padding: 52px 44px 52px 8vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+
+    .left-idle.hidden {
+      opacity: 0;
+      transform: translateY(-12px);
+      pointer-events: none;
+    }
+
+    .left-idle-label {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .left-idle-hint {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 300;
+      color: var(--border);
+      line-height: 1.4;
+    }
+
+    /* Detail panel */
+    .detail {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .detail.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .detail-inner {
+      width: 100%;
+      padding: 52px 44px 52px 8vw;
+      overflow-y: auto;
+      max-height: 100%;
+    }
+
+    .detail-tag {
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .detail-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 21px;
+      font-weight: 400;
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+
+    .detail-meta {
+      font-size: 12px;
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: 20px;
+      line-height: 1.6;
+      white-space: pre-line;
+    }
+
+    .detail-bullets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .detail-bullets li {
+      font-size: 13px;
+      line-height: 1.75;
+      color: var(--muted);
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .detail-bullets li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 5px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .detail-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 20px;
+      transition: background 0.2s;
+      margin-top: 4px;
+    }
+    .detail-link:hover { background: var(--bg2); }
+
+    /* --- RIGHT PANEL --- */
+    .right {
+      flex: 1;
+      padding: calc(50vh - 60px) 8vw 24px 52px;
+    }
+
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 4px;
+    }
+
+    .exp-group { margin-bottom: 68px; }
+
+    .exp-item {
+      padding: 20px 0 20px 18px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      cursor: default;
+      transition: padding-left 0.35s ease;
+    }
+
+    .exp-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 20px;
+      bottom: 20px;
+      width: 1.5px;
+      background: transparent;
+      transition: background 0.35s ease;
+      border-radius: 2px;
+    }
+
+    .exp-item.active::before { background: var(--accent); }
+    .exp-item.active { padding-left: 26px; }
+
+    .exp-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 4px;
+    }
+
+    .exp-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      font-weight: 400;
+      line-height: 1.35;
+      color: var(--muted);
+      flex: 1;
+      transition: color 0.35s ease;
+    }
+
+    .exp-item.active .exp-title { color: var(--text); }
+
+    .exp-year {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+      margin-top: 3px;
+    }
+
+    .exp-sub   { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .exp-venue { font-size: 11px; color: var(--muted); font-style: italic; margin-top: 2px; opacity: 0.75; }
+
+    /* scroll dots */
+    .scroll-indicator {
+      position: fixed;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 10;
+    }
+
+    .scroll-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background 0.3s, transform 0.3s;
+    }
+    .scroll-dot.active { background: var(--accent); transform: scale(1.5); }
+
+    .bottom-spacer { height: calc(50vh - 60px); }
+  </style>
+</head>
+<body>
+
+<!-- ====== HERO ====== -->
+<section class="hero">
+  <div class="hero-content">
+
+    <div class="hero-name-block">
+      <div class="line">
+        Hi, I'm&nbsp;<span class="hero-photo-chip">
+          <img src="me.jpg" alt="Pengyu Zhang">
+        </span>&nbsp;Pengyu Zhang!
+      </div>
+      <div class="line"><span class="dim">I'm a</span>&nbsp;PhD Researcher&nbsp;<span class="dim">at</span></div>
+      <div class="line">
+        <span class="accent">Cambridge.</span>
+        <span class="hero-icons">
+          <a href="#" class="hero-icon-link" title="Copy email" onclick="copyEmail(event)">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+          </a>
+          <a href="https://scholar.google.com/citations?user=SO2jQXAAAAAJ&hl=en&inst=6810896796868835251" target="_blank" class="hero-icon-link" title="Google Scholar">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M5.242 13.769L0 9.5 12 0l12 9.5-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269z"/><path d="M12 10a7 7 0 100 14 7 7 0 000-14z"/></svg>
+          </a>
+          <a href="https://www.linkedin.com/in/pengyu-zhang-4745a1207/" target="_blank" class="hero-icon-link" title="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+        </span>
+      </div>
+    </div>
+
+    <p class="hero-desc">PhD student in the Department of Engineering (expected 2027), supervised by <strong>Prof Mark Girolami</strong>. Previously completed my MEng at University of Cambridge (2019–2023), supported by the <strong>Cambridge Trust Scholarship</strong>. Working at the intersection of <strong>physics-informed machine learning</strong> and <strong>statistical inference</strong> — building models that learn from data while respecting the laws of physics.</p>
+
+    <div class="hero-cta">
+      <div class="hero-cta-arrow">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M6 2v8M3 7l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      Scroll to explore
+    </div>
+
+  </div>
+</section>
+
+<!-- ====== SPLIT SECTION ====== -->
+<div class="split" id="splitSection">
+
+  <!-- LEFT -->
+  <div class="left" id="leftPanel">
+    <div class="left-inner">
+
+      <!-- Idle hint (shown when nothing is active) -->
+      <div class="left-idle" id="profileView">
+        <div class="left-idle-label">Scroll to explore</div>
+        <div class="left-idle-hint">Scroll through the list<br>to see details here.</div>
+      </div>
+
+      <!-- Detail panel (filled by JS) -->
+      <div class="detail" id="detailView">
+        <div class="detail-inner">
+          <div class="detail-tag"    id="detailTag"></div>
+          <div class="detail-title"  id="detailTitle"></div>
+          <div class="detail-meta"   id="detailMeta"></div>
+          <ul class="detail-bullets" id="detailBullets"></ul>
+          <div id="detailLinkWrap"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right" id="rightPanel">
+
+    <!-- Publications -->
+    <div class="exp-group">
+      <div class="section-label">Publications</div>
+
+      <div class="exp-item" data-type="pub" data-id="0">
+        <div class="exp-row">
+          <div class="exp-title">Hierarchical Inference and Closure Learning via Adaptive Surrogates for ODEs and PDEs</div>
+          <div class="exp-year">2026</div>
+        </div>
+        <div class="exp-sub">P. Zhang, A. Vadeboncoeur, A. Glyn-Davies, M. Girolami</div>
+        <div class="exp-venue">arXiv:2603.03922 · Under Review</div>
+      </div>
+
+      <div class="exp-item" data-type="pub" data-id="1">
+        <div class="exp-row">
+          <div class="exp-title">Towards Efficient and Stable Ocean State Forecasting: A Continuous-Time Koopman Approach</div>
+          <div class="exp-year">2026</div>
+        </div>
+        <div class="exp-sub">R. Grozavescu, P. Zhang, M. Girolami, E. Meunier</div>
+        <div class="exp-venue">ICLR 2026 AI&amp;PDE Workshop</div>
+      </div>
+
+      <div class="exp-item" data-type="pub" data-id="2">
+        <div class="exp-row">
+          <div class="exp-title">Koopman Autoencoders with Continuous-Time Latent Dynamics for Fluid Dynamics Forecasting</div>
+          <div class="exp-year">2026</div>
+        </div>
+        <div class="exp-sub">R. Grozavescu, P. Zhang, E. Meunier, M. Girolami</div>
+        <div class="exp-venue">arXiv:2602.02832</div>
+      </div>
+
+      <div class="exp-item" data-type="pub" data-id="3">
+        <div class="exp-row">
+          <div class="exp-title">Probabilistic Super-Resolution for High-Fidelity Physical System Simulations with Uncertainty Quantification</div>
+          <div class="exp-year">2025</div>
+        </div>
+        <div class="exp-sub">P. Zhang, C. Duffin, A. Glyn-Davies, A. Vadeboncoeur, M. Girolami</div>
+        <div class="exp-venue">11th International Operational Modal Analysis Conference (IOMAC)</div>
+      </div>
+
+      <div class="exp-item" data-type="pub" data-id="4">
+        <div class="exp-row">
+          <div class="exp-title">Inequitable Efficiency: Unravelling the Social and Built Environment Drivers of London's Housing Energy Performance</div>
+          <div class="exp-year">2026</div>
+        </div>
+        <div class="exp-sub">C. Zhang, C. Cao, P. Zhang, R. M. Alvarez, R. Debnath</div>
+        <div class="exp-venue">Energy Policy, Volume 210, 115057</div>
+      </div>
+
+      <div class="exp-item" data-type="pub" data-id="5">
+        <div class="exp-row">
+          <div class="exp-title">Deciphering Public Attention to Geoengineering and Climate Issues Using Machine Learning and Dynamic Analysis</div>
+          <div class="exp-year">2024</div>
+        </div>
+        <div class="exp-sub">R. Debnath, P. Zhang, T. Qin, R. M. Alvarez, S. D. Fitzgerald</div>
+        <div class="exp-venue">arXiv:2405.07010</div>
+      </div>
+    </div>
+
+    <!-- Internships -->
+    <div class="exp-group">
+      <div class="section-label">Internships</div>
+
+      <div class="exp-item" data-type="intern" data-id="0">
+        <div class="exp-row">
+          <div class="exp-title">IBM — Physics &amp; AI Research Intern</div>
+          <div class="exp-year">Jun–Sep 2025</div>
+        </div>
+        <div class="exp-sub">Daresbury, UK</div>
+      </div>
+
+      <div class="exp-item" data-type="intern" data-id="1">
+        <div class="exp-row">
+          <div class="exp-title">Suochen Technologies — AI Research Intern</div>
+          <div class="exp-year">Jul–Sep 2024</div>
+        </div>
+        <div class="exp-sub">Shanghai, China</div>
+      </div>
+
+      <div class="exp-item" data-type="intern" data-id="2">
+        <div class="exp-row">
+          <div class="exp-title">Huawei Technologies — AI Research Intern, GPU Team</div>
+          <div class="exp-year">Jul–Oct 2023</div>
+        </div>
+        <div class="exp-sub">Cambridge, UK</div>
+      </div>
+    </div>
+
+    <div class="bottom-spacer"></div>
+  </div>
+</div>
+
+<!-- Scroll dots -->
+<div class="scroll-indicator" id="scrollDots"></div>
+
+<script>
+  const pubData = [
+    {
+      tag: 'Publication · arXiv · Under Review',
+      title: 'Hierarchical Inference and Closure Learning via Adaptive Surrogates for ODEs and PDEs',
+      meta: 'P. Zhang, A. Vadeboncoeur, A. Glyn-Davies, M. Girolami\narXiv:2603.03922, 2026',
+      bullets: [
+        'Develops a hierarchical Bayesian framework for joint inference and closure learning in complex ODE and PDE systems.',
+        'Uses adaptive surrogate models to efficiently navigate high-dimensional parameter spaces with minimal cost.',
+        'Combines data-driven learning with physical structure — a core direction of physics-informed machine learning.'
+      ],
+      link: 'https://arxiv.org/abs/2603.03922',
+      linkLabel: 'View on arXiv'
+    },
+    {
+      tag: 'Publication · ICLR 2026 AI&PDE Workshop',
+      title: 'Towards Efficient and Stable Ocean State Forecasting: A Continuous-Time Koopman Approach',
+      meta: 'R. Grozavescu, P. Zhang, M. Girolami, E. Meunier\nICLR 2026 AI&PDE Workshop',
+      bullets: [
+        'Applies continuous-time Koopman operator theory to ocean state prediction, achieving more stable long-range forecasts.',
+        'Bridges classical dynamical systems theory with modern neural architectures for scientific forecasting.',
+        'Demonstrates improved stability over discrete-time baselines on oceanographic benchmarks.'
+      ],
+      link: 'https://openreview.net/pdf?id=Brab1off0O',
+      linkLabel: 'View on OpenReview'
+    },
+    {
+      tag: 'Publication · arXiv:2602.02832',
+      title: 'Koopman Autoencoders with Continuous-Time Latent Dynamics for Fluid Dynamics Forecasting',
+      meta: 'R. Grozavescu, P. Zhang, E. Meunier, M. Girolami\narXiv:2602.02832, 2026',
+      bullets: [
+        'Introduces a Koopman autoencoder that learns a low-dimensional linear representation of nonlinear fluid systems.',
+        'Operates in continuous time — enabling flexible inference at arbitrary time points without fixed step constraints.',
+        'Enables physically consistent long-horizon predictions of complex fluid dynamics.'
+      ],
+      link: 'https://arxiv.org/abs/2602.02832',
+      linkLabel: 'View on arXiv'
+    },
+    {
+      tag: 'Publication · IOMAC 2025',
+      title: 'Probabilistic Super-Resolution for High-Fidelity Physical System Simulations with Uncertainty Quantification',
+      meta: 'P. Zhang, C. Duffin, A. Glyn-Davies, A. Vadeboncoeur, M. Girolami\nIOMAC 2025',
+      bullets: [
+        'Proposes a probabilistic framework for super-resolving low-fidelity physical simulations into high-fidelity outputs.',
+        'Integrates uncertainty quantification — each prediction comes with calibrated confidence estimates.',
+        'Validated on structural and fluid mechanics benchmarks with strong gains over deterministic baselines.'
+      ],
+      link: 'https://hal.science/hal-05232749v1/file/Probabilistic_Super_Resolution_for_High_Fidelity_Physical_System_Simulations_with_Uncertainty_Quantification.pdf',
+      linkLabel: 'View PDF'
+    },
+    {
+      tag: 'Publication · Energy Policy, Vol. 210, 2026',
+      title: "Inequitable Efficiency: Unravelling the Social and Built Environment Drivers of London's Housing Energy Performance",
+      meta: 'C. Zhang, C. Cao, P. Zhang, R. M. Alvarez, R. Debnath\nEnergy Policy, Volume 210, 115057, 2026',
+      bullets: [
+        'Uses ML to analyse social and structural drivers of energy performance disparities across London housing stock.',
+        'Reveals inequitable patterns in energy efficiency correlated with socioeconomic indicators and building characteristics.',
+        'Informs data-driven policy recommendations for more equitable urban energy transitions.'
+      ],
+      link: 'https://doi.org/10.1016/j.enpol.2025.115057',
+      linkLabel: 'View in Energy Policy'
+    },
+    {
+      tag: 'Publication · arXiv:2405.07010, 2024',
+      title: 'Deciphering Public Attention to Geoengineering and Climate Issues Using Machine Learning and Dynamic Analysis',
+      meta: 'R. Debnath, P. Zhang, T. Qin, R. M. Alvarez, S. D. Fitzgerald\narXiv:2405.07010, 2024',
+      bullets: [
+        'Applies NLP and dynamic analysis to track how public discourse on geoengineering evolves over time.',
+        'Identifies key drivers and sentiment shifts in climate-related media and online discussions.',
+        'Provides actionable insights for policymakers engaging the public on climate solutions.'
+      ],
+      link: 'https://arxiv.org/abs/2405.07010',
+      linkLabel: 'View on arXiv'
+    }
+  ];
+
+  const internData = [
+    {
+      tag: 'Internship · IBM Research',
+      title: 'Physics & AI Research Intern',
+      meta: 'IBM, Daresbury, UK · June – September 2025',
+      bullets: [
+        'Contributed to the Prithivi climate foundation model, generating synthetic extreme weather events — atmospheric rivers and hurricanes — using WRF simulation.',
+        'Explored solution manifolds of governing PDEs to identify parameter regimes producing unseen extreme events for data augmentation.',
+        'Fine-tuned a Transformer-based foundation model by integrating synthetic with reanalysis datasets, achieving measurable forecast improvements.'
+      ],
+      link: null,
+      linkLabel: null
+    },
+    {
+      tag: 'Internship · Suochen Technologies',
+      title: 'AI Research Intern',
+      meta: 'Suochen Technologies, Shanghai, China · July – September 2024',
+      bullets: [
+        'Implemented CycleGAN and Physics-Informed Diffusion Models for super-resolution on turbulent flow reconstruction tasks.',
+        'Extended the probabilistic super-resolution approach from PhD research to complex 3D heat conduction and irregular mesh scenarios.',
+        'Achieved results superior to bicubic interpolation baselines across all tested benchmarks.'
+      ],
+      link: null,
+      linkLabel: null
+    },
+    {
+      tag: 'Internship · Huawei Technologies',
+      title: 'AI Research Intern — GPU Team',
+      meta: 'Huawei Technologies, Cambridge, UK · July – October 2023',
+      bullets: [
+        'Developed a neural rendering algorithm for 3D scene reconstruction using Neural Radiance Fields (NRC) with Hash Encodings to capture high-frequency details.',
+        'Identified artefacts from Hash Encoding and implemented a multiplicative Fourier level-of-detail method to effectively mitigate them.',
+        'Developed a high-performance super-resolution model for mobile video, achieving 42.35 dB SNR — surpassing bicubic upscaling.'
+      ],
+      link: null,
+      linkLabel: null
+    }
+  ];
+
+  // Build scroll dots
+  const items = Array.from(document.querySelectorAll('.exp-item'));
+  const dotsEl = document.getElementById('scrollDots');
+  items.forEach(() => {
+    const dot = document.createElement('div');
+    dot.className = 'scroll-dot';
+    dotsEl.appendChild(dot);
+  });
+  const dots = Array.from(dotsEl.querySelectorAll('.scroll-dot'));
+
+  const profileView   = document.getElementById('profileView');
+  const detailView    = document.getElementById('detailView');
+  const detailTag     = document.getElementById('detailTag');
+  const detailTitle   = document.getElementById('detailTitle');
+  const detailMeta    = document.getElementById('detailMeta');
+  const detailBullets = document.getElementById('detailBullets');
+  const detailLinkWrap= document.getElementById('detailLinkWrap');
+
+  let currentActiveIdx = -1;
+
+  function activateItem(idx) {
+    if (idx === currentActiveIdx) return;
+    currentActiveIdx = idx;
+
+    items.forEach((el, i) => el.classList.toggle('active', i === idx));
+    dots.forEach((d, i)  => d.classList.toggle('active', i === idx));
+
+    if (idx < 0) {
+      profileView.classList.remove('hidden');
+      detailView.classList.remove('active');
+      return;
+    }
+    profileView.classList.add('hidden');
+    detailView.classList.add('active');
+
+    const el   = items[idx];
+    const type = el.dataset.type;
+    const id   = parseInt(el.dataset.id);
+    const data = type === 'pub' ? pubData[id] : internData[id];
+
+    detailTag.textContent    = data.tag;
+    detailTitle.textContent  = data.title;
+    detailMeta.textContent   = data.meta;
+    detailBullets.innerHTML  = data.bullets.map(b => `<li>${b}</li>`).join('');
+    detailLinkWrap.innerHTML = data.link
+      ? `<a href="${data.link}" target="_blank" class="detail-link">
+           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+             <path d="M5 2H2a1 1 0 00-1 1v7a1 1 0 001 1h7a1 1 0 001-1V7M8 1h3m0 0v3m0-3L5 7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+           </svg>
+           ${data.linkLabel}
+         </a>`
+      : '';
+  }
+
+  function onScroll() {
+    const vh = window.innerHeight;
+    const splitTop = document.getElementById('splitSection').getBoundingClientRect().top;
+    if (splitTop > vh * 0.35) { activateItem(-1); return; }
+
+    let bestIdx = -1, bestDist = Infinity;
+    items.forEach((el, i) => {
+      const rect = el.getBoundingClientRect();
+      if (rect.bottom < 0 || rect.top > vh) return;
+      const mid  = rect.top + rect.height / 2;
+      const dist = Math.abs(mid - vh * 0.5);
+      if (dist < bestDist) { bestDist = dist; bestIdx = i; }
+    });
+
+    if (bestIdx >= 0) activateItem(bestIdx);
+    else activateItem(-1);
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Email copy to clipboard
+  window.copyEmail = function(e) {
+    e.preventDefault();
+    navigator.clipboard.writeText('pz281@cam.ac.uk').then(() => {
+      const popup = document.createElement('div');
+      popup.textContent = 'pz281@cam.ac.uk copied!';
+      popup.style.cssText = `
+        position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+        background: var(--text); color: var(--bg); font-family: 'DM Sans', sans-serif;
+        font-size: 13px; padding: 10px 20px; border-radius: 24px;
+        z-index: 99999; pointer-events: none;
+        animation: fadeInUp 0.25s ease;
+      `;
+      document.body.appendChild(popup);
+      setTimeout(() => popup.remove(), 2000);
+    });
+  };
+
+  const style = document.createElement('style');
+  style.textContent = `@keyframes fadeInUp { from { opacity: 0; transform: translateX(-50%) translateY(8px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }`;
+  document.head.appendChild(style);
+</script>
+</body>
+</html>
