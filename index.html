@@ -384,7 +384,7 @@
       padding: 20px 0 20px 18px;
       border-bottom: 1px solid var(--border);
       position: relative;
-      cursor: default;
+      cursor: pointer;
       transition: padding-left 0.35s ease;
     }
 
@@ -603,7 +603,7 @@
 
       <div class="exp-item" data-type="intern" data-id="2">
         <div class="exp-row">
-          <div class="exp-title">Huawei Technologies — AI Research Intern, GPU Team</div>
+          <div class="exp-title">Huawei Technologies — AI Research Intern</div>
           <div class="exp-year">Jul–Oct 2023</div>
         </div>
         <div class="exp-sub">Cambridge, UK</div>
@@ -708,7 +708,7 @@
     },
     {
       tag: 'Internship · Huawei Technologies',
-      title: 'AI Research Intern — GPU Team',
+      title: 'AI Research Intern',
       meta: 'Huawei Technologies, Cambridge, UK · July – October 2023',
       bullets: [
         'Developed a neural rendering algorithm for 3D scene reconstruction using Neural Radiance Fields (NRC) with Hash Encodings to capture high-frequency details.',
@@ -794,6 +794,13 @@
 
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
+
+  // Click an item to scroll it to the vertical center of the viewport
+  items.forEach(el => {
+    el.addEventListener('click', () => {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  });
 
   // Email copy to clipboard
   window.copyEmail = function(e) {
